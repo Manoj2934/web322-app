@@ -1,3 +1,16 @@
+/*********************************************************************************
+*  WEB322 – Assignment 03
+*  I declare that this assignment is my own work in accordance with Seneca  Academic Policy.  No part 
+*  of this assignment has been copied manually or electronically from any other source 
+*  (including 3rd party web sites) or distributed to other students.
+* 
+*  Name:Manoj Khatri Student ID: 165867219 Date:2023-06-19
+*
+*  Cyclic Web App URL: https://white-viper-boot.cyclic.app/about
+* 
+*  GitHub Repository URL: https://github.com/Manoj2934/web322-app
+*
+********************************************************************************/ 
 const express = require("express");
 const multer = require("multer");
 const cloudinary = require("cloudinary").v2;
@@ -19,9 +32,9 @@ const app = express();
 app.use(express.static("public"));
 
 cloudinary.config({ 
-  cloud_name: 'your_cloud_name', 
-  api_key: 'your_api_key', 
-  api_secret: 'your_api_secret' 
+  cloud_name: 'dyee1c4hb', 
+  api_key: '413588338766645', 
+  api_secret: 'dyXIekZDmtq-e8gP7qOCr2BceKg' 
 });
 
 const upload = multer();
