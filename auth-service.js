@@ -1,39 +1,48 @@
-const bcrypt = require('bcryptjs');
+/*********************************************************************************
+ *  WEB322 – Assignment 06
+ *  I declare that this assignment is my own work in accordance with Seneca  Academic Policy.  No part *  of this assignment has been copied manually or electronically from any other source
+ *  (including 3rd party web sites) or distributed to other students.
+ *
+ *  Name:Justin Joseph Student ID: 127690212 Date: 09/04/2023
+ *  Online (Cyclic) Link: https://zany-pink-octopus-yoke.cyclic.app/
+ ********************************************************************************/
+bcrypt = require("bcryptjs");
+const mongoose = require("mongoose");
+const Schema = mongoose.Schema;
 
-var mongoose = require("mongoose");
-var Schema = mongoose.Schema;
-var userSchema = new Schema({
-  userName:  String,
+const userSchema = new Schema({
+  userName: {
+    type: String,
+    unique: true,
+  },
   password: String,
   email: String,
   loginHistory: [
     {
-    DateTime: Date,
-    userAgent: String
-    } 
-  ]
+      dateTime: Date,
+      userAgent: String,
+    },
+  ],
 });
 
-let User;
-
 module.exports.initialize = function () {
-    return new Promise(function (resolve, reject) {
-        let db = mongoose.createConnection(
-            "mongodb+srv://dbUser:Apple%40123@senecaweb.2n3cw0q.mongodb.net/?retryWrites=true&w=majority"
-            );
-
-        db.on('error', (err)=>{
-            reject(err);
-        });
-        db.once('open', ()=>{
-           User = db.model("users", userSchema);
-           resolve();
-        });
+  return new Promise((resolve, reject) => {
+    let db = mongoose.createConnection(
+      "mongodb+srv://dbUser:Apple%40123@senecaweb.2n3cw0q.mongodb.net/?retryWrites=true&w=majority",
+      { useNewUrlParser: true, useUnifiedTopology: true }
+    );
+    db.on("error", (err) => {
+      reject(err);
     });
+    db.once("open", () => {
+      User = db.model("users", userSchema);
+      resolve();
+    });
+  });
 };
 
-module.exports.registerUser = function(userData) {
-    return new Promise((resolve, reject) => {
+module.exports.registerUser = function (userData) {
+  return new Promise((resolve, reject) => {
     if (userData.password !== userData.password2) {
       reject("Passwords do not match");
     } else {
@@ -51,7 +60,7 @@ module.exports.registerUser = function(userData) {
               if (err.code === 11000) {
                 reject("Username already taken");
               } else {
-                reject("There was an error creating the user: " + err);
+                reject(`There was an error creating the user: ${err}`);
               }
             });
         })
@@ -63,44 +72,43 @@ module.exports.registerUser = function(userData) {
   });
 };
 
-module.exports.checkUser = function(userData) {
+module.exports.checkUser = function (userData) {
   return new Promise((resolve, reject) => {
-    User.findOne({ userName: userData.userName })
+    User.find({ userName: userData.userName })
       .exec()
-      .then((user) => {
-        if (!user) {
-          reject("Unable to find user: " + userData.userName);
+      .then((users) => {
+        if (users.length === 0) {
+          reject(`Unable to find user: ${userData.userName}`);
         } else {
           bcrypt
-            .compare(userData.password, user.password)
+            .compare(userData.password, users[0].password)
             .then((result) => {
-              if (result) {
-                user.loginHistory.push({
-                  DateTime: new Date().toString(),
-                  userAgent: userData.userAgent
-                });
-    
-                User.updateOne(
-                  { userName: user.userName },
-                  { $set: { loginHistory: user.loginHistory } }
-                )
-                .exec()
-                .then(() => {
-                  resolve(user);
-                })
-                .catch((err) => {
-                  reject("There was an error verifying the user: " + err);
-                });
+              if (result === true) {
+                resolve(users[0]);
               } else {
-                reject("Incorrect Password for user: " + userData.userName);
+                reject(`Incorrect Password for user: ${userData.userName}`);
               }
             });
-            
+          users[0].loginHistory.push({
+            dateTime: new Date().toString(),
+            userAgent: userData.userAgent,
+          });
+          User.updateOne(
+            { userName: users[0].userName },
+            { $set: { loginHistory: users[0].loginHistory } },
+            { multi: false }
+          )
+            .exec()
+            .then(() => {
+              resolve(users[0]);
+            })
+            .catch((err) => {
+              reject(`There was an error verifying the user: ${err}`);
+            });
         }
       })
-      .catch((err) => 
-          reject("Unable to find user: " + userData.userName));
+      .catch(() => {
+        reject(`Unable to find user: ${userData.userName}`);
+      });
   });
-    
 };
-
