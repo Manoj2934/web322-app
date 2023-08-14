@@ -1,3 +1,17 @@
+/*********************************************************************************
+*  WEB322 – Assignment 06
+*  I declare that this assignment is my own work in accordance with Seneca  Academic Policy.  No part of this
+*  assignment has been copied manually or electronically from any other source (including web sites) or 
+*  distributed to other students.
+* 
+*  Name: Manoj Khatri Student ID: 165867219 Date: 2023-08-13
+*
+*  Cyclic Web App URL: 
+*
+*  GitHub Repository URL: https://github.com/Manoj2934/web322-app
+*
+********************************************************************************/ 
+
 var express = require("express");
 const multer = require("multer");
 const cloudinary = require("cloudinary").v2;
