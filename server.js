@@ -16,8 +16,8 @@ const Sequelize = require('sequelize');
 
 const authData = require("./auth-service.js");
 const clientSessions = require("client-sessions");
-
-cloudinary.config({
+          
+cloudinary.config({ 
   cloud_name: 'dyee1c4hb', 
   api_key: '413588338766645', 
   api_secret: 'dyXIekZDmtq-e8gP7qOCr2BceKg' 
